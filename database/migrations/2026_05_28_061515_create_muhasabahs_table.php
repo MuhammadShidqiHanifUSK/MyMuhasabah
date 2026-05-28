@@ -10,13 +10,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('muhasabahs', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('user_id')->constrained()->onDelete('cascade');
-        $table->string('title');
-        $table->text('content');
-        $table->string('mood')->nullable();
-        $table->date('tanggal');
-        $table->timestamps();
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('title');
+            $table->text('content');
+            $table->string('mood')->nullable();
+            $table->date('tanggal');
+            $table->timestamps();
         });
     }
 

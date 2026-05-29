@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MuhasabahController;
+use App\Http\Controllers\TrackerController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -20,6 +21,11 @@ Route::middleware('auth')->group(function () {
 
     // Muhasabah CRUD
     Route::resource('muhasabah', MuhasabahController::class);
+
+    // Tracker
+    Route::get('/tracker', [TrackerController::class, 'index'])->name('tracker.index');
+    Route::get('/tracker/{tanggal}', [TrackerController::class, 'show'])->name('tracker.show');
+    Route::post('/tracker/{tanggal}', [TrackerController::class, 'store'])->name('tracker.store');
 });
 
 require __DIR__.'/auth.php';

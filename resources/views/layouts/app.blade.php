@@ -312,7 +312,7 @@
                     <a href="{{ route('muhasabah.index') }}" class="mm-nav-link {{ request()->routeIs('muhasabah.*') ? 'active' : '' }}">
                         📔 Muhasabah
                     </a>
-                    <a href="#" class="mm-nav-link">
+                    <a href="{{ route('tracker.index') }}" class="mm-nav-link {{ request()->routeIs('tracker.*') ? 'active' : '' }}">
                         ✅ Tracker
                     </a>
                 </div>

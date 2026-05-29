@@ -11,9 +11,14 @@ class TrackerController extends Controller
     // Halaman daftar tracker (kalender)
     public function index()
     {
+       $bulan = request('bulan')
+            ? \Carbon\Carbon::parse(request('bulan').'-01')
+            : \Carbon\Carbon::now()->startOfMonth();
+
         $trackers = Tracker::where('user_id', auth()->id())
+            ->whereYear('tanggal', $bulan->year)
+            ->whereMonth('tanggal', $bulan->month)
             ->orderBy('tanggal', 'desc')
-            ->take(30)
             ->get();
 
         return view('tracker.index', compact('trackers'));

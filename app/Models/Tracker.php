@@ -10,7 +10,7 @@ class Tracker extends Model
         'user_id',
         'tanggal',
 
-        // Sholat Wajib
+        // Sholat Wajib (string: tepat_waktu/telat/terlewat/null)
         'shubuh', 'dzuhur', 'ashar', 'maghrib', 'isya',
 
         // Sholat Sunnah
@@ -36,42 +36,43 @@ class Tracker extends Model
 
     protected $casts = [
         'tanggal' => 'date',
-        'shubuh' => 'boolean',
-        'dzuhur' => 'boolean',
-        'ashar' => 'boolean',
-        'maghrib' => 'boolean',
-        'isya' => 'boolean',
-        'sunnah_qabliyah_shubuh' => 'boolean',
-        'sunnah_qabliyah_dzuhur' => 'boolean',
-        'sunnah_badiyah_dzuhur' => 'boolean',
-        'sunnah_qabliyah_ashar' => 'boolean',
+
+        // Sholat wajib sekarang string, tidak perlu cast boolean
+        // Sholat Sunnah
+        'sunnah_qabliyah_shubuh'  => 'boolean',
+        'sunnah_qabliyah_dzuhur'  => 'boolean',
+        'sunnah_badiyah_dzuhur'   => 'boolean',
+        'sunnah_qabliyah_ashar'   => 'boolean',
         'sunnah_qabliyah_maghrib' => 'boolean',
-        'sunnah_badiyah_maghrib' => 'boolean',
-        'sunnah_qabliyah_isya' => 'boolean',
-        'sunnah_badiyah_isya' => 'boolean',
-        'tahajud' => 'boolean',
-        'dhuha' => 'boolean',
-        'witir' => 'boolean',
-        'tilawah' => 'boolean',
-        'dzikir_pagi' => 'boolean',
-        'dzikir_petang' => 'boolean',
-        'puasa_sunnah' => 'boolean',
-        'sedekah' => 'boolean',
+        'sunnah_badiyah_maghrib'  => 'boolean',
+        'sunnah_qabliyah_isya'    => 'boolean',
+        'sunnah_badiyah_isya'     => 'boolean',
+        'tahajud'                 => 'boolean',
+        'dhuha'                   => 'boolean',
+        'witir'                   => 'boolean',
+
+        // Amalan Kebaikan
+        'tilawah'        => 'integer',
+        'dzikir_pagi'    => 'boolean',
+        'dzikir_petang'  => 'boolean',
+        'puasa_sunnah'   => 'boolean',
+        'sedekah'        => 'boolean',
         'membantu_orang' => 'boolean',
-        'silaturahmi' => 'boolean',
-        'berkata_kotor' => 'boolean',
-        'berbohong' => 'boolean',
-        'ghibah' => 'boolean',
-        'berkata_kasar' => 'boolean',
-        'merokok' => 'boolean',
-        'begadang_siasia' => 'boolean',
+        'silaturahmi'    => 'boolean',
+
+        // Amal Keburukan
+        'berkata_kotor'        => 'boolean',
+        'berbohong'            => 'boolean',
+        'ghibah'               => 'boolean',
+        'berkata_kasar'        => 'boolean',
+        'merokok'              => 'boolean',
+        'begadang_siasia'      => 'boolean',
         'scrolling_berlebihan' => 'boolean',
-        'marah_berlebihan' => 'boolean',
-        'iri_dengki' => 'boolean',
-        'sombong' => 'boolean',
+        'marah_berlebihan'     => 'boolean',
+        'iri_dengki'           => 'boolean',
+        'sombong'              => 'boolean',
     ];
 
-    // Relasi ke User
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -20,7 +20,18 @@ class MuhasabahController extends Controller
     // Tampilkan form buat catatan baru
     public function create()
     {
-        return view('muhasabah.create');
+        $tanggal = request('tanggal', date('Y-m-d'));
+        return view('muhasabah.create', compact('tanggal'));
+    }
+
+    public function byTanggal($tanggal)
+    {
+        $muhasabahs = Muhasabah::where('user_id', auth()->id())
+            ->whereDate('tanggal', $tanggal)
+            ->orderBy('tanggal', 'desc')
+            ->paginate(10);
+
+        return view('muhasabah.index', compact('muhasabahs'));
     }
 
     // Simpan catatan baru ke database

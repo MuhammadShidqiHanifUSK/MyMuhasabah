@@ -3,15 +3,16 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MuhasabahController;
 use App\Http\Controllers\TrackerController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     // Profile
@@ -20,6 +21,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Muhasabah CRUD
+    Route::get('/muhasabah/tanggal/{tanggal}', [MuhasabahController::class, 'byTanggal'])->name('muhasabah.byTanggal');
     Route::resource('muhasabah', MuhasabahController::class);
 
     // Tracker

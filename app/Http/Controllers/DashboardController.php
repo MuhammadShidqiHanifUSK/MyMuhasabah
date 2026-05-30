@@ -26,16 +26,24 @@ class DashboardController extends Controller
             $check->subDay();
         }
 
-        // ── Heatmap (365 hari terakhir) ──
+      // ── Heatmap (365 hari terakhir) ──
         $heatmapStart = $today->copy()->subDays(364);
         $muhasabahs   = Muhasabah::where('user_id', $userId)
             ->where('tanggal', '>=', $heatmapStart)
             ->get()
             ->groupBy(fn($m) => Carbon::parse($m->tanggal)->toDateString());
 
+        // Buat array dimulai dari Senin minggu pertama
         $heatmap = [];
-        for ($i = 0; $i < 365; $i++) {
-            $date          = $heatmapStart->copy()->addDays($i)->toDateString();
+
+        // Mundur ke Senin terdekat dari heatmapStart
+        $start = $heatmapStart->copy()->startOfWeek(Carbon::MONDAY);
+
+        // Maju sampai hari ini
+        $end = $today->copy();
+
+        for ($d = $start->copy(); $d->lte($end); $d->addDay()) {
+            $date = $d->toDateString();
             $heatmap[$date] = isset($muhasabahs[$date]) ? min($muhasabahs[$date]->count(), 4) : 0;
         }
 

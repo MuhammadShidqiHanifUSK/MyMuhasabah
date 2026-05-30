@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="mm-page-title">✏️ Tulis Muhasabah Baru</h2>
-        <a href="{{ route('muhasabah.index') }}" class="mm-btn mm-btn-secondary">
+        <a href="{{ request('from') === 'dashboard' ? route('dashboard') : route('muhasabah.index') }}" class="mm-btn mm-btn-secondary">
             ← Kembali
         </a>
     </x-slot>
@@ -31,7 +31,7 @@
                     <label class="mm-label" for="tanggal">🗓️ Tanggal</label>
                     <input type="date" id="tanggal" name="tanggal"
                            class="mm-input {{ $errors->has('tanggal') ? 'is-error' : '' }}"
-                           value="{{ old('tanggal', date('Y-m-d')) }}">
+                           value="{{ old('tanggal', $tanggal) }}">
                     @error('tanggal')
                         <p class="mm-error-msg">⚠️ {{ $message }}</p>
                     @enderror
@@ -87,7 +87,7 @@
 
                 {{-- Actions --}}
                 <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
-                    <a href="{{ route('muhasabah.index') }}" class="mm-btn mm-btn-secondary">
+                    <a href="{{ request('from') === 'dashboard' ? route('dashboard') : route('muhasabah.index') }}" class="mm-btn mm-btn-secondary">
                         Batal
                     </a>
                     <button type="submit" class="mm-btn mm-btn-primary">

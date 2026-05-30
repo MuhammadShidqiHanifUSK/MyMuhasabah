@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="mm-page-title">
-            ✅ Tracker — {{ \Carbon\Carbon::parse($tanggal)->translatedFormat('d F Y') }}
+            ✅ Tracker — {{ \Carbon\Carbon::parse($tanggal)->translatedFormat('l, d F Y') }}
         </h2>
         <a href="{{ route('tracker.index') }}" class="mm-btn mm-btn-secondary">
             ← Kembali

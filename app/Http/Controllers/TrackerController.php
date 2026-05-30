@@ -42,9 +42,8 @@ class TrackerController extends Controller
     {
         $tanggal = Carbon::parse($tanggal)->toDateString();
 
-        $fields = [
-            // Sholat Wajib
-            'shubuh', 'dzuhur', 'ashar', 'maghrib', 'isya',
+        $sholatWajib = ['shubuh', 'dzuhur', 'ashar', 'maghrib', 'isya'];
+        $booleanFields = [
             // Sholat Sunnah
             'sunnah_qabliyah_shubuh', 'sunnah_qabliyah_dzuhur',
             'sunnah_badiyah_dzuhur', 'sunnah_qabliyah_ashar',
@@ -52,7 +51,7 @@ class TrackerController extends Controller
             'sunnah_qabliyah_isya', 'sunnah_badiyah_isya',
             'tahajud', 'dhuha', 'witir',
             // Amalan Kebaikan
-            'tilawah', 'dzikir_pagi', 'dzikir_petang',
+            'dzikir_pagi', 'dzikir_petang',
             'puasa_sunnah', 'sedekah', 'membantu_orang', 'silaturahmi',
             // Amal Keburukan
             'berkata_kotor', 'berbohong', 'ghibah', 'berkata_kasar',
@@ -62,9 +61,18 @@ class TrackerController extends Controller
 
         $data = ['user_id' => auth()->id(), 'tanggal' => $tanggal];
 
-        foreach ($fields as $field) {
+        // Sholat wajib → string value
+        foreach ($sholatWajib as $sholat) {
+            $data[$sholat] = $request->input($sholat); // null / tepat_waktu / telat / terlewat
+        }
+
+        // Boolean fields
+        foreach ($booleanFields as $field) {
             $data[$field] = $request->has($field) ? true : false;
         }
+
+        // Tilawah → integer
+        $data['tilawah'] = (int) $request->input('tilawah', 0);
 
         Tracker::updateOrCreate(
             ['user_id' => auth()->id(), 'tanggal' => $tanggal],

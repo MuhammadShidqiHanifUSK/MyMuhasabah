@@ -28,13 +28,14 @@ class TrackerController extends Controller
     public function show($tanggal)
     {
         $tanggal = Carbon::parse($tanggal)->toDateString();
+        $from = request('from');
 
         $tracker = Tracker::firstOrNew([
             'user_id' => auth()->id(),
             'tanggal' => $tanggal,
         ]);
 
-        return view('tracker.show', compact('tracker', 'tanggal'));
+        return view('tracker.show', compact('tracker', 'tanggal', 'from'));
     }
 
     // Simpan / update tracker
@@ -79,7 +80,10 @@ class TrackerController extends Controller
             $data
         );
 
-        return redirect()->route('tracker.index')
-            ->with('success', 'Tracker ibadah berhasil disimpan! ✨');
+        $redirectTo = $request->input('from') === 'dashboard'
+            ? route('dashboard')
+            : route('tracker.index');
+            
+        return redirect($redirectTo)->with('success', 'Tracker ibadah berhasil disimpan! ✨');
     }
 }

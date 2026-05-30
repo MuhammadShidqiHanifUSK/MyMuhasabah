@@ -3,13 +3,13 @@
         <h2 class="mm-page-title">
             ✅ Tracker — {{ \Carbon\Carbon::parse($tanggal)->translatedFormat('l, d F Y') }}
         </h2>
-        <a href="{{ route('tracker.index') }}" class="mm-btn mm-btn-secondary">
+        <a href="{{ ($from ?? '') === 'dashboard' ? route('dashboard') : route('tracker.index') }}" class="mm-btn mm-btn-secondary">
             ← Kembali
         </a>
     </x-slot>
 
     <div style="max-width:780px; margin:0 auto;">
-        <form action="{{ route('tracker.store', $tanggal) }}" method="POST">
+        <form action="{{ route('tracker.store', ['tanggal' => $tanggal, 'from' => $from ?? '']) }}" method="POST">
             @csrf
 
             {{-- SHOLAT WAJIB --}}

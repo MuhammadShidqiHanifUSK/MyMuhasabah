@@ -182,8 +182,7 @@
             <h3 style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--text-main);">
                 ✅ Tracker Hari Ini
             </h3>
-            <a href="{{ route('tracker.show', now()->toDateString()) }}"
-            class="mm-btn mm-btn-secondary mm-btn-sm">
+            <a href="{{ route('tracker.show', now()->toDateString()) }}?from=dashboard" class="mm-btn mm-btn-secondary mm-btn-sm">
                 {{ $trackerHariIni ? '✏️ Edit' : '+ Isi Sekarang' }}
             </a>
         </div>
@@ -362,7 +361,7 @@
         <a href="{{ route('muhasabah.create') }}" class="mm-btn mm-btn-primary">
             ✏️ Tulis Muhasabah
         </a>
-        <a href="{{ route('tracker.show', now()->toDateString()) }}" class="mm-btn mm-btn-secondary">
+        <a href="{{ route('tracker.show', now()->toDateString()) }}?from=dashboard" class="mm-btn mm-btn-secondary">
             ✅ Isi Tracker Hari Ini
         </a>
     </div>

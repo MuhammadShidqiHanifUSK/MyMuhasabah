@@ -36,6 +36,8 @@
                     @error('tanggal')
                         <p class="mm-error-msg">⚠️ {{ $message }}</p>
                     @enderror
+
+                    <p id="label-hari" style="font-size:0.82rem; color:var(--primary-dark); font-weight:600; margin-top:0.4rem;"></p>
                 </div>
 
                 {{-- Mood --}}
@@ -99,4 +101,20 @@
             </form>
         </div>
     </div>
+
+    <script>
+        const hariList = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+        const bulanList = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+        function updateHari() {
+            const val = document.getElementById('tanggal').value;
+            const label = document.getElementById('label-hari');
+            if (!val) { label.textContent = ''; return; }
+            const d = new Date(val + 'T00:00:00');
+            label.textContent = `📅 ${hariList[d.getDay()]}, ${d.getDate()} ${bulanList[d.getMonth()]} ${d.getFullYear()}`;
+        }
+
+        document.getElementById('tanggal').addEventListener('change', updateHari);
+        updateHari();
+    </script>
 </x-app-layout>

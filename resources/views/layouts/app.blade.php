@@ -315,6 +315,11 @@
                     <a href="{{ route('tracker.index') }}" class="mm-nav-link {{ request()->routeIs('tracker.*') ? 'active' : '' }}">
                         ✅ Tracker
                     </a>
+                     @if(auth()->user()->role === 'admin')
+                        <a href="{{ route('admin.dashboard') }}" class="mm-nav-link {{ request()->routeIs('admin.*') ? 'active' : '' }}">
+                            ⚙️ Admin
+                        </a>
+                    @endif
                 </div>
 
                 <div class="mm-nav-user">

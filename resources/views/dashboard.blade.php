@@ -168,7 +168,7 @@
             @empty
                 <div class="mm-empty" style="padding:2rem;">
                     <p>Belum ada catatan muhasabah.</p>
-                    <a href="{{ route('muhasabah.create') }}" class="mm-btn mm-btn-primary" style="margin-top:0.75rem;">
+                    <a href="{{ route('muhasabah.create') }}?from=dashboard" class="mm-btn mm-btn-primary" style="margin-top:0.75rem;">
                         ✏️ Tulis Sekarang
                     </a>
                 </div>
@@ -358,7 +358,7 @@
 
     {{-- Quick Actions --}}
     <div style="margin-top:1.5rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
-        <a href="{{ route('muhasabah.create') }}" class="mm-btn mm-btn-primary">
+        <a href="{{ route('muhasabah.create') }}?from=dashboard" class="mm-btn mm-btn-primary">
             ✏️ Tulis Muhasabah
         </a>
         <a href="{{ route('tracker.show', now()->toDateString()) }}?from=dashboard" class="mm-btn mm-btn-secondary">

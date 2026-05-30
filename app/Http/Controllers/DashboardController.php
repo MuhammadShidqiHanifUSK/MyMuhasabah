@@ -88,6 +88,57 @@ class DashboardController extends Controller
             ->take(3)
             ->get();
 
+        // ── Tracker Hari Ini ──
+        $trackerHariIni = Tracker::where('user_id', $userId)
+            ->whereDate('tanggal', $today)
+            ->first();
+
+        // ── Data Tilawah 30 Hari Terakhir (Line Chart) ──
+        $tilawahData = Tracker::where('user_id', $userId)
+            ->where('tanggal', '>=', $today->copy()->subDays(29))
+            ->orderBy('tanggal', 'asc')
+            ->get(['tanggal', 'tilawah']);
+
+        $tilawahLabels = [];
+        $tilawahValues = [];
+       $tilawahLabels = [];
+        $tilawahValues = [];
+        for ($i = 29; $i >= 0; $i--) {
+            $date = $today->copy()->subDays($i)->toDateString();
+            $found = $tilawahData->first(fn($t) => Carbon::parse($t->tanggal)->toDateString() === $date);
+            $tilawahLabels[] = \Carbon\Carbon::parse($date)->translatedFormat('d M');
+            $tilawahValues[] = $found ? (int)$found->tilawah : 0;
+        }
+
+        // ── Data Sholat 7 Hari Terakhir (Bar Chart) ──
+        $sholatData = Tracker::where('user_id', $userId)
+            ->where('tanggal', '>=', $today->copy()->subDays(6))
+            ->orderBy('tanggal', 'asc')
+            ->get();
+
+        $sholatLabels    = [];
+        $sholatTepat     = [];
+        $sholatTelat     = [];
+        $sholatTerlewat  = [];
+        $sholatFields    = ['shubuh', 'dzuhur', 'ashar', 'maghrib', 'isya'];
+
+        for ($i = 6; $i >= 0; $i--) {
+            $date    = $today->copy()->subDays($i)->toDateString();
+            $tracker = $sholatData->first(fn($t) => $t->tanggal->toDateString() === $date);
+            $sholatLabels[]   = \Carbon\Carbon::parse($date)->translatedFormat('d M');
+            $tepat = $telat = $terlewat = 0;
+            if ($tracker) {
+                foreach ($sholatFields as $s) {
+                    if ($tracker->$s === 'tepat_waktu') $tepat++;
+                    elseif ($tracker->$s === 'telat') $telat++;
+                    elseif ($tracker->$s === 'terlewat') $terlewat++;
+                }
+            }
+            $sholatTepat[]    = $tepat;
+            $sholatTelat[]    = $telat;
+            $sholatTerlewat[] = $terlewat;
+        }
+
         return view('dashboard', compact(
             'streak',
             'heatmap',
@@ -97,6 +148,13 @@ class DashboardController extends Controller
             'totalTilawah',
             'muhasabahTerakhir',
             'catatanTerbaru',
+            'trackerHariIni',
+            'tilawahLabels',
+            'tilawahValues',
+            'sholatLabels',
+            'sholatTepat',
+            'sholatTelat',
+            'sholatTerlewat',
         ));
     }
 }

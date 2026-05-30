@@ -176,6 +176,187 @@
         </div>
     </div>
 
+    {{-- Tracker Hari Ini --}}
+    <div class="mm-card" style="margin-bottom:1.5rem;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+            <h3 style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--text-main);">
+                ✅ Tracker Hari Ini
+            </h3>
+            <a href="{{ route('tracker.show', now()->toDateString()) }}"
+            class="mm-btn mm-btn-secondary mm-btn-sm">
+                {{ $trackerHariIni ? '✏️ Edit' : '+ Isi Sekarang' }}
+            </a>
+        </div>
+
+        @if($trackerHariIni)
+            @php
+                $sholatFields = ['shubuh', 'dzuhur', 'ashar', 'maghrib', 'isya'];
+                $sholatLabel  = ['shubuh' => 'Shubuh', 'dzuhur' => 'Dzuhur', 'ashar' => 'Ashar', 'maghrib' => 'Maghrib', 'isya' => 'Isya'];
+            @endphp
+
+            {{-- Sholat Wajib --}}
+            <p style="font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); margin-bottom:0.5rem;">🕌 Sholat Wajib</p>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1rem;">
+                @foreach($sholatFields as $s)
+                    @php $status = $trackerHariIni->$s; @endphp
+                    <div style="
+                        padding:0.35rem 0.75rem; border-radius:9999px; font-size:0.78rem; font-weight:600;
+                        {{ $status === 'tepat_waktu' ? 'background:var(--primary-50); color:var(--primary-dark); border:1px solid #a7f3d0;' : ($status === 'telat' ? 'background:var(--accent-light); color:#92400e; border:1px solid #fde68a;' : ($status === 'terlewat' ? 'background:var(--danger-light); color:var(--danger); border:1px solid #fca5a5;' : 'background:#f3f4f6; color:#9ca3af; border:1px solid #e5e7eb;')) }}
+                    ">
+                        {{ $status === 'tepat_waktu' ? '✅' : ($status === 'telat' ? '🕐' : ($status === 'terlewat' ? '❌' : '—')) }}
+                        {{ $sholatLabel[$s] }}
+                    </div>
+                @endforeach
+            </div>
+
+            {{-- Tilawah & Amalan --}}
+            <div style="display:flex; gap:1.5rem; flex-wrap:wrap;">
+                <div>
+                    <p style="font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); margin-bottom:0.35rem;">📖 Tilawah</p>
+                    <p style="font-size:1.25rem; font-weight:800; color:var(--primary);">
+                        {{ $trackerHariIni->tilawah }} <span style="font-size:0.8rem; font-weight:500; color:var(--text-muted);">halaman</span>
+                    </p>
+                </div>
+                @php
+                    $amalList = ['dzikir_pagi'=>'Dzikir Pagi','dzikir_petang'=>'Dzikir Petang','puasa_sunnah'=>'Puasa Sunnah','sedekah'=>'Sedekah','membantu_orang'=>'Membantu Orang','silaturahmi'=>'Silaturahmi'];
+                    $amalDone = collect($amalList)->filter(fn($l, $k) => $trackerHariIni->$k)->keys();
+                @endphp
+                @if($amalDone->count() > 0)
+                    <div>
+                        <p style="font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); margin-bottom:0.35rem;">💚 Amalan</p>
+                        <p style="font-size:0.85rem; color:var(--primary-dark); font-weight:600;">
+                            {{ $amalDone->map(fn($k) => $amalList[$k])->implode(', ') }}
+                        </p>
+                    </div>
+                @endif
+            </div>
+
+        @else
+            <div style="text-align:center; padding:1.5rem; color:var(--text-muted);">
+                <p style="font-size:0.9rem;">Belum ada tracker untuk hari ini.</p>
+                <p style="font-size:0.82rem; margin-top:0.25rem;">Yuk isi tracker ibadahmu sekarang! 🌱</p>
+            </div>
+        @endif
+    </div>
+
+    {{-- Charts --}}
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
+
+        {{-- Line Chart Tilawah --}}
+        <div class="mm-card">
+            <h3 style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--text-main); margin-bottom:1rem;">
+                📖 Tilawah 30 Hari Terakhir
+            </h3>
+            <canvas id="tilawahChart" height="180"></canvas>
+        </div>
+
+        {{-- Bar Chart Sholat --}}
+        <div class="mm-card">
+            <h3 style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--text-main); margin-bottom:1rem;">
+                🕌 Sholat 7 Hari Terakhir
+            </h3>
+            <canvas id="sholatChart" height="180"></canvas>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Line Chart Tilawah
+        new Chart(document.getElementById('tilawahChart'), {
+            type: 'line',
+            data: {
+                labels: @json($tilawahLabels),
+                datasets: [{
+                    label: 'Halaman Tilawah',
+                    data: @json($tilawahValues),
+                    borderColor: '#059669',
+                    backgroundColor: 'rgba(5,150,105,0.08)',
+                    borderWidth: 2.5,
+                    pointBackgroundColor: '#059669',
+                    pointRadius: 3,
+                    pointHoverRadius: 5,
+                    tension: 0.4,
+                    fill: true,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => `${ctx.parsed.y} halaman`
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1, font: { size: 11 } },
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    },
+                    x: {
+                        ticks: {
+                            font: { size: 10 },
+                            maxTicksLimit: 10,
+                        },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // Bar Chart Sholat
+        new Chart(document.getElementById('sholatChart'), {
+            type: 'bar',
+            data: {
+                labels: @json($sholatLabels),
+                datasets: [
+                    {
+                        label: 'Tepat Waktu',
+                        data: @json($sholatTepat),
+                        backgroundColor: 'rgba(5,150,105,0.8)',
+                        borderRadius: 4,
+                    },
+                    {
+                        label: 'Telat',
+                        data: @json($sholatTelat),
+                        backgroundColor: 'rgba(245,158,11,0.8)',
+                        borderRadius: 4,
+                    },
+                    {
+                        label: 'Terlewat',
+                        data: @json($sholatTerlewat),
+                        backgroundColor: 'rgba(239,68,68,0.8)',
+                        borderRadius: 4,
+                    },
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { font: { size: 11 }, padding: 10 }
+                    },
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 5,
+                        ticks: { stepSize: 1, font: { size: 11 } },
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    },
+                    x: {
+                        ticks: { font: { size: 11 } },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    </script>
+
     {{-- Quick Actions --}}
     <div style="margin-top:1.5rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
         <a href="{{ route('muhasabah.create') }}" class="mm-btn mm-btn-primary">
